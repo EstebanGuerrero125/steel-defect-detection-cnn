@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Datos (se descargan de Kaggle, no se suben)
+data/*
+!data/.gitkeep
+
+# Credenciales de Kaggle
+kaggle.json
+
+# IDE / SO
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
