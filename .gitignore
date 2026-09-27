@@ -12,6 +12,9 @@ venv/
 data/*
 !data/.gitkeep
 
+# Paquetes de resultados descargados de Colab (se descomprimen en la raíz)
+resultados_*.zip
+
 # Credenciales de Kaggle
 kaggle.json
 

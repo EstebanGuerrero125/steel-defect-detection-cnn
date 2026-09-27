@@ -23,13 +23,18 @@ def augmentation() -> keras.Sequential:
 
 def build_baseline_cnn(input_shape=(200, 200, 1), num_classes: int = len(CLASSES),
                        dropout: float = 0.3) -> keras.Model:
-    """CNN pequeña entrenada desde cero: 4 bloques Conv-BN-ReLU-MaxPool y una capa densa."""
+    """CNN pequeña entrenada desde cero: 4 bloques Conv-BN-ReLU-MaxPool y una capa densa.
+
+    BatchNormalization usa momentum 0.9 (Keras usa 0.99 por defecto): con ~38 lotes por
+    época, las estadísticas móviles que se usan en inferencia no alcanzan a converger con
+    0.99 y el modelo predice una sola clase al evaluar.
+    """
     inputs = keras.Input(shape=input_shape)
     x = augmentation()(inputs)
     x = layers.Rescaling(1 / 255)(x)
     for filters in (32, 64, 128, 256):
         x = layers.Conv2D(filters, 3, padding="same", use_bias=False)(x)
-        x = layers.BatchNormalization()(x)
+        x = layers.BatchNormalization(momentum=0.9)(x)
         x = layers.ReLU()(x)
         x = layers.MaxPooling2D()(x)
     x = layers.GlobalAveragePooling2D()(x)
