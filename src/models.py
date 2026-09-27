@@ -1,0 +1,38 @@
+"""Arquitecturas de los modelos de clasificación de defectos."""
+from __future__ import annotations
+
+from tensorflow import keras
+from tensorflow.keras import layers
+
+from src.dataset import CLASSES
+
+
+def augmentation() -> keras.Sequential:
+    """Aumento de datos para imágenes en [0, 255].
+
+    Los defectos no tienen una orientación fija, así que se voltean en ambos ejes. Los
+    cambios de brillo y contraste evitan que el modelo aprenda a distinguir clases por la
+    iluminación, que en el NEU varía mucho entre clases.
+    """
+    return keras.Sequential([
+        layers.RandomFlip("horizontal_and_vertical"),
+        layers.RandomBrightness(0.15, value_range=(0, 255)),
+        layers.RandomContrast(0.15),
+    ], name="augmentacion")
+
+
+def build_baseline_cnn(input_shape=(200, 200, 1), num_classes: int = len(CLASSES),
+                       dropout: float = 0.3) -> keras.Model:
+    """CNN pequeña entrenada desde cero: 4 bloques Conv-BN-ReLU-MaxPool y una capa densa."""
+    inputs = keras.Input(shape=input_shape)
+    x = augmentation()(inputs)
+    x = layers.Rescaling(1 / 255)(x)
+    for filters in (32, 64, 128, 256):
+        x = layers.Conv2D(filters, 3, padding="same", use_bias=False)(x)
+        x = layers.BatchNormalization()(x)
+        x = layers.ReLU()(x)
+        x = layers.MaxPooling2D()(x)
+    x = layers.GlobalAveragePooling2D()(x)
+    x = layers.Dropout(dropout)(x)
+    outputs = layers.Dense(num_classes, activation="softmax")(x)
+    return keras.Model(inputs, outputs, name="cnn_baseline")
