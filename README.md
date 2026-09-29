@@ -27,10 +27,22 @@ El control de calidad visual es un proceso clave en normas como ISO 9001: automa
 ## Hoja de ruta
 
 - [x] 1. Descargar y explorar el dataset NEU — [`01_exploracion_dataset.ipynb`](notebooks/01_exploracion_dataset.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/EstebanGuerrero125/steel-defect-detection-cnn/blob/main/notebooks/01_exploracion_dataset.ipynb)
-- [ ] 2. Entrenar una CNN pequeña desde cero en Keras (baseline) — [`02_cnn_baseline.ipynb`](notebooks/02_cnn_baseline.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/EstebanGuerrero125/steel-defect-detection-cnn/blob/main/notebooks/02_cnn_baseline.ipynb)
+- [x] 2. Entrenar una CNN pequeña desde cero en Keras (baseline) — [`02_cnn_baseline.ipynb`](notebooks/02_cnn_baseline.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/EstebanGuerrero125/steel-defect-detection-cnn/blob/main/notebooks/02_cnn_baseline.ipynb)
 - [ ] 3. Transfer learning con MobileNetV2
 - [ ] 4. Evaluación: matriz de confusión y `classification_report` (scikit-learn)
 - [ ] 5. Endpoint `/predict` en FastAPI con el modelo guardado
+
+## Resultados
+
+Evaluación sobre el conjunto de test (360 imágenes, 60 por clase), que no se usó durante el entrenamiento.
+
+| Modelo | Parámetros | Épocas | Tiempo (GPU T4) | Accuracy val | Accuracy test |
+|---|---|---|---|---|---|
+| CNN baseline (desde cero) | 390.822 | 60 | 2,8 min | 98,6 % | **99,4 %** |
+
+![Curvas de entrenamiento de la CNN baseline](reports/figures/02_curvas_entrenamiento.png)
+
+El primer entrenamiento predecía una sola clase al evaluar: 16,7 % de accuracy en test, contra 95 % en train. El mismo modelo en modo entrenamiento alcanzaba 70,8 %, así que el problema estaba en las estadísticas móviles de BatchNormalization, que no convergían con el `momentum` por defecto (0,99) y solo ~38 lotes por época. Con `momentum=0.9` el modelo entrena de forma estable.
 
 ## Estructura
 

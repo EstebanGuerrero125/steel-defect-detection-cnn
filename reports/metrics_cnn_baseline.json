@@ -1,0 +1,9 @@
+{
+  "modelo": "cnn_baseline",
+  "parametros": 390822,
+  "epocas_entrenadas": 60,
+  "minutos_entrenamiento": 2.8,
+  "val_accuracy": 0.9861,
+  "test_accuracy": 0.9944,
+  "test_loss": 0.0204
+}
