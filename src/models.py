@@ -41,3 +41,39 @@ def build_baseline_cnn(input_shape=(200, 200, 1), num_classes: int = len(CLASSES
     x = layers.Dropout(dropout)(x)
     outputs = layers.Dense(num_classes, activation="softmax")(x)
     return keras.Model(inputs, outputs, name="cnn_baseline")
+
+
+def build_mobilenetv2(image_size: int = 224, num_classes: int = len(CLASSES),
+                      dropout: float = 0.2) -> keras.Model:
+    """MobileNetV2 preentrenada en ImageNet, congelada, con una capa de clasificación nueva.
+
+    La base se llama con `training=False` para que sus capas BatchNormalization usen siempre
+    las estadísticas de ImageNet, también durante el ajuste fino: reentrenarlas con lotes
+    pequeños las degrada.
+    """
+    base = keras.applications.MobileNetV2(
+        input_shape=(image_size, image_size, 3), include_top=False, weights="imagenet"
+    )
+    base.trainable = False
+
+    inputs = keras.Input(shape=(image_size, image_size, 3))
+    x = augmentation()(inputs)
+    x = layers.Rescaling(1 / 127.5, offset=-1)(x)  # MobileNetV2 espera píxeles en [-1, 1]
+    x = base(x, training=False)
+    x = layers.GlobalAveragePooling2D()(x)
+    x = layers.Dropout(dropout)(x)
+    outputs = layers.Dense(num_classes, activation="softmax")(x)
+    return keras.Model(inputs, outputs, name="mobilenetv2_transfer")
+
+
+def unfreeze_top_layers(model: keras.Model, n_layers: int = 30) -> int:
+    """Descongela las últimas `n_layers` capas de la base para el ajuste fino.
+
+    Devuelve el número total de capas de la base. Hay que volver a compilar el modelo.
+    """
+    base = next(layer for layer in model.layers
+                if isinstance(layer, keras.Model) and layer.name != "augmentacion")
+    base.trainable = True
+    for layer in base.layers[:-n_layers]:
+        layer.trainable = False
+    return len(base.layers)

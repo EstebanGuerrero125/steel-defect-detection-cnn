@@ -28,7 +28,7 @@ El control de calidad visual es un proceso clave en normas como ISO 9001: automa
 
 - [x] 1. Descargar y explorar el dataset NEU — [`01_exploracion_dataset.ipynb`](notebooks/01_exploracion_dataset.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/EstebanGuerrero125/steel-defect-detection-cnn/blob/main/notebooks/01_exploracion_dataset.ipynb)
 - [x] 2. Entrenar una CNN pequeña desde cero en Keras (baseline) — [`02_cnn_baseline.ipynb`](notebooks/02_cnn_baseline.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/EstebanGuerrero125/steel-defect-detection-cnn/blob/main/notebooks/02_cnn_baseline.ipynb)
-- [ ] 3. Transfer learning con MobileNetV2
+- [ ] 3. Transfer learning con MobileNetV2 — [`03_mobilenetv2_transfer.ipynb`](notebooks/03_mobilenetv2_transfer.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/EstebanGuerrero125/steel-defect-detection-cnn/blob/main/notebooks/03_mobilenetv2_transfer.ipynb)
 - [ ] 4. Evaluación: matriz de confusión y `classification_report` (scikit-learn)
 - [ ] 5. Endpoint `/predict` en FastAPI con el modelo guardado
 
