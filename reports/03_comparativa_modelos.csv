@@ -1,0 +1,10 @@
+metrica,CNN baseline,MobileNetV2
+Accuracy test,0.9944,1.0
+Errores en test (de 360),2.0,0.0
+Accuracy val,0.9861,1.0
+Época en que llega a 95 % val,10.0,1.0
+Épocas entrenadas,60.0,29.0
+Minutos de entrenamiento,2.8,2.0
+Parámetros,390822.0,2265670.0
+Tamaño del archivo (MB),4.8,22.0
+Inferencia (ms por imagen),0.65,1.3

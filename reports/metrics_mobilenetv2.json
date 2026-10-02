@@ -1,0 +1,12 @@
+{
+  "modelo": "mobilenetv2_transfer",
+  "parametros": 2265670,
+  "epocas_entrenadas": 29,
+  "epocas_fase_1": 20,
+  "epocas_fase_2": 9,
+  "minutos_entrenamiento": 2.0,
+  "val_accuracy_fase_1": 1.0,
+  "val_accuracy": 1.0,
+  "test_accuracy": 1.0,
+  "test_loss": 0.0199
+}
