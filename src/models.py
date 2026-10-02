@@ -45,12 +45,7 @@ def build_baseline_cnn(input_shape=(200, 200, 1), num_classes: int = len(CLASSES
 
 def build_mobilenetv2(image_size: int = 224, num_classes: int = len(CLASSES),
                       dropout: float = 0.2) -> keras.Model:
-    """MobileNetV2 preentrenada en ImageNet, congelada, con una capa de clasificación nueva.
-
-    La base se llama con `training=False` para que sus capas BatchNormalization usen siempre
-    las estadísticas de ImageNet, también durante el ajuste fino: reentrenarlas con lotes
-    pequeños las degrada.
-    """
+    """MobileNetV2 preentrenada en ImageNet, congelada, con una capa de clasificación nueva."""
     base = keras.applications.MobileNetV2(
         input_shape=(image_size, image_size, 3), include_top=False, weights="imagenet"
     )
@@ -69,11 +64,18 @@ def build_mobilenetv2(image_size: int = 224, num_classes: int = len(CLASSES),
 def unfreeze_top_layers(model: keras.Model, n_layers: int = 30) -> int:
     """Descongela las últimas `n_layers` capas de la base para el ajuste fino.
 
+    Las capas BatchNormalization se dejan congeladas para que sigan usando las estadísticas
+    de ImageNet: en Keras 3 el `training=False` con que se llama a la base no se respeta
+    durante `fit()`, y una BatchNormalization entrenable pasa a normalizar con las
+    estadísticas de cada lote, lo que desestabiliza el ajuste fino.
+
     Devuelve el número total de capas de la base. Hay que volver a compilar el modelo.
     """
     base = next(layer for layer in model.layers
                 if isinstance(layer, keras.Model) and layer.name != "augmentacion")
     base.trainable = True
-    for layer in base.layers[:-n_layers]:
-        layer.trainable = False
+    for i, layer in enumerate(base.layers):
+        frozen = i < len(base.layers) - n_layers
+        if frozen or isinstance(layer, layers.BatchNormalization):
+            layer.trainable = False
     return len(base.layers)
